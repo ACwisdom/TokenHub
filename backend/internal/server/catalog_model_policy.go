@@ -19,6 +19,25 @@ func catalogModelMetadata(raw map[string]any) map[string]string {
 	return metadata
 }
 
+func catalogModelWithProvenance(model ProviderCatalogModel, catalogID string) ProviderCatalogModel {
+	model.Metadata = cloneStringMap(model.Metadata)
+	if model.Metadata == nil {
+		model.Metadata = map[string]string{}
+	}
+	if model.Metadata["provider_catalog_id"] == "" {
+		model.Metadata["provider_catalog_id"] = catalogID
+	}
+	if model.Metadata["provider_model_id"] == "" {
+		model.Metadata["provider_model_id"] = model.ID
+	}
+	return model
+}
+
+func unscopedCatalogInventory(model ProviderModel) bool {
+	source := firstNonEmpty(model.Metadata["source"], model.Source)
+	return source == providerCatalogLocalSource || source == providerCatalogUpstreamSource || source == "provider-catalog" || source == "tokenhub-standard-catalog" || source == "builtin" || strings.HasPrefix(source, "plugin:")
+}
+
 func catalogModelRetired(metadata map[string]string, now time.Time) bool {
 	if metadata["lifecycle_status"] == "retired" {
 		return true
@@ -72,14 +91,16 @@ func (index catalogAdvisoryIndex) apply(provider Provider, model ProviderModel) 
 	// notice does not govern an independently hosted catalog or deployment ID.
 	sourceCatalogID := strings.TrimSpace(model.Metadata["provider_catalog_id"])
 	sourceModelID := strings.TrimSpace(model.Metadata["provider_model_id"])
-	if sourceCatalogID != "" && (sourceCatalogID != catalogID || sourceModelID != "" && sourceModelID != model.UpstreamModel) {
+	current, matched := index[catalogID][model.UpstreamModel]
+	foreign := sourceCatalogID != "" && (sourceCatalogID != catalogID || sourceModelID != "" && sourceModelID != model.UpstreamModel)
+	legacy := sourceCatalogID == "" && unscopedCatalogInventory(model)
+	if !matched && (foreign || legacy) {
 		model.Metadata = cloneStringMap(model.Metadata)
 		for _, key := range []string{"availability", "lifecycle_status", "shutdown_at", "replacement_model", "lifecycle_source"} {
 			delete(model.Metadata, key)
 		}
 	}
-	current, ok := index[catalogID][model.UpstreamModel]
-	if !ok {
+	if !matched {
 		return model
 	}
 	model.Metadata = cloneStringMap(model.Metadata)
@@ -87,6 +108,7 @@ func (index catalogAdvisoryIndex) apply(provider Provider, model ProviderModel) 
 		model.Metadata = map[string]string{}
 	}
 	for _, key := range catalogAdvisoryMetadataKeys {
+		delete(model.Metadata, key)
 		if value := current[key]; value != "" {
 			model.Metadata[key] = value
 		}

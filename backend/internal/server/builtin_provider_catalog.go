@@ -51,17 +51,19 @@ func deepSeekBuiltinCatalogEntry() ProviderCatalogEntry {
 		model.InputModalities = []string{"text"}
 		model.OutputModalities = []string{"text"}
 		model.Capabilities = []string{"chat", "reasoning", "tools", "structured_outputs", "temperature"}
-		model.SupportedParameters = []string{"tools", "tool_choice", "response_format", "reasoning", "max_tokens", "max_completion_tokens", "max_output_tokens", "top_logprobs", "temperature"}
+		model.SupportedParameters = []string{"tools", "tool_choice", "response_format", "reasoning", "reasoning_effort", "max_tokens", "max_completion_tokens", "max_output_tokens", "top_logprobs", "temperature", "top_p"}
 		model.Metadata = map[string]string{
 			"source": "builtin", "upstream_source": "https://api-docs.deepseek.com/quick_start/pricing/",
 			"catalog_reviewed_at": "2026-10-10", "verified_at": "2026-10-10",
 			"endpoints":                "responses,chat/completions,anthropic",
 			"reasoning_effort_options": "none,low,high,max", "reasoning_default": "true",
-			"pricing_status": "unverified", "pricing_note": "Configure current peak/off-peak prices and the holiday calendar before publishing.",
+			"reasoning_effort_aliases": `{"minimal":"low","medium":"high","xhigh":"high","ultra":"max"}`,
+			"pricing_status":           "unverified", "pricing_note": "Configure current peak/off-peak prices and the holiday calendar before publishing.",
 			"features":           "function-calling,structured-outputs,reasoning,apply-patch,web-search",
 			"top_logprobs_range": "0,20", "responses_stateful": "false",
 			"prompt_cache_mode": "automatic", "custom_tool_names": "apply_patch",
 			"temperature_note": "temperature has no effect in thinking mode.",
+			"top_p_note":       "Only effective in thinking mode (0.95-1.0); lower values clamp to 0.95. Non-thinking mode fixes it at 1.0.",
 		}
 		if model.ID == "deepseek-v4-pro" {
 			model.DisplayName = "DeepSeek V4 Pro 0813"

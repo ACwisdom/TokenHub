@@ -29,6 +29,10 @@ Lifecycle policy is matched by the Provider's `catalog_id` and the exact upstrea
 
 Standard templates retain their source `provider_catalog_id` and `provider_model_id`. If either identifies a different offer from the selected Provider catalog and upstream ID, inherited lifecycle annotations do not restrict that deployment. An exact match in the selected Provider catalog still applies its own lifecycle policy. DeepSeek temperature requests remain accepted; the thinking-mode qualification is descriptive metadata, not a parameter-admission restriction.
 
+Catalog imports also retain their source catalog and model IDs. Legacy catalog inventory without provenance uses only the current exact-match catalog lifecycle policy, so changing a Provider to an independently hosted catalog does not carry over an old official retirement notice. For an exact match, current lifecycle and call-support annotations replace earlier advisory fields, including restrictions that have been withdrawn. This response overlay does not rewrite stored annotations, configured costs, or existing routes.
+
+Declared `reasoning_effort_options` also participate in Chat request admission, including older imported inventories. Jev checks the requested effort value for both Chat and Responses, so an incompatible Claude candidate does not stop a request that another candidate can serve. Declared compatibility aliases remain accepted, while inventories without declared effort options retain their prior behavior. DeepSeek accepts `top_p`; it only takes effect in thinking mode within 0.95–1.0, with lower values clamped to 0.95, and is fixed at 1.0 in non-thinking mode. This qualification stays in metadata and does not cause valid requests to be rejected.
+
 ## Confirm upstream costs before publishing
 
 The catalog's price fields are reference data, not a supplier bill or an automatic update to saved Provider costs. A missing or zero reference price does not mean free usage. Prices can depend on region, subscription, context tier, time window, cache type, image quality, resolution, seconds, characters, or search units.

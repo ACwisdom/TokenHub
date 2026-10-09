@@ -2546,6 +2546,7 @@ models:
     - reasoning
     - tools
     supported_parameters:
+    - top_p
     - temperature
     - max_tokens
     - max_output_tokens
@@ -2565,9 +2566,10 @@ models:
       model_version: DeepSeek-V4.1-Flash
       reasoning_effort_options: none,low,high,max
       reasoning_effort_default: high
-      reasoning_effort_aliases: '{"minimal":"low","medium":"high","xhigh":"high"}'
+      reasoning_effort_aliases: '{"minimal":"low","medium":"high","xhigh":"high","ultra":"max"}'
       parameter_source: https://api-docs.deepseek.com/api/create-chat-completion/
       temperature_note: temperature has no effect in thinking mode.
+      top_p_note: Only effective in thinking mode (0.95-1.0); lower values clamp to 0.95. Non-thinking mode fixes it at 1.0.
       context_limit_label: 1M
       output_limit_label: 384K (393216)
       catalog_reviewed_at: '2026-10-10'
@@ -3706,6 +3708,7 @@ models:
     - reasoning
     - tools
     supported_parameters:
+    - top_p
     - temperature
     - max_tokens
     - max_output_tokens
@@ -3726,9 +3729,10 @@ models:
       model_version: DeepSeek-V4.1-Flash
       reasoning_effort_options: none,low,high,max
       reasoning_effort_default: high
-      reasoning_effort_aliases: '{"minimal":"low","medium":"high","xhigh":"high"}'
+      reasoning_effort_aliases: '{"minimal":"low","medium":"high","xhigh":"high","ultra":"max"}'
       parameter_source: https://api-docs.deepseek.com/api/create-chat-completion/
       temperature_note: temperature has no effect in thinking mode.
+      top_p_note: Only effective in thinking mode (0.95-1.0); lower values clamp to 0.95. Non-thinking mode fixes it at 1.0.
       context_limit_label: 1M
       output_limit_label: 384K (393216)
       catalog_reviewed_at: '2026-10-10'
@@ -3765,6 +3769,7 @@ models:
     - reasoning
     - tools
     supported_parameters:
+    - top_p
     - temperature
     - max_tokens
     - max_output_tokens
@@ -3784,9 +3789,10 @@ models:
       model_version: DeepSeek-V4-Pro-0813
       reasoning_effort_options: none,low,high,max
       reasoning_effort_default: high
-      reasoning_effort_aliases: '{"minimal":"low","medium":"high","xhigh":"high"}'
+      reasoning_effort_aliases: '{"minimal":"low","medium":"high","xhigh":"high","ultra":"max"}'
       parameter_source: https://api-docs.deepseek.com/api/create-chat-completion/
       temperature_note: temperature has no effect in thinking mode.
+      top_p_note: Only effective in thinking mode (0.95-1.0); lower values clamp to 0.95. Non-thinking mode fixes it at 1.0.
       context_limit_label: 1M
       output_limit_label: 384K (393216)
       catalog_reviewed_at: '2026-10-10'

@@ -362,7 +362,7 @@ func normalizeProviderCatalogEntryWithPolicy(id string, raw map[string]any, cata
 			if model.ID == "" {
 				continue
 			}
-			entry.Models = append(entry.Models, model)
+			entry.Models = append(entry.Models, catalogModelWithProvenance(model, entry.ID))
 		}
 	}
 	entry.ModelsCount = len(entry.Models)
@@ -508,7 +508,7 @@ func catalogModelParameters(raw map[string]any, model ProviderCatalogModel) []st
 			parameters = append(parameters, modality+"_input")
 		}
 	}
-	return catalogUniqueStrings(parameters)
+	return catalogUniqueStrings(catalogReasoningParameters(parameters, model.Type, model.Metadata))
 }
 
 func customProviderCatalogEntry() ProviderCatalogEntry {

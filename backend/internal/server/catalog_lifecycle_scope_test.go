@@ -83,8 +83,12 @@ func TestCatalogLifecycleAnnotationsRequireMatchingTemplateProvenance(t *testing
 			if !test.wantRetired && (effective.Metadata["shutdown_at"] != "" || effective.Metadata["replacement_model"] != "" || effective.Metadata["lifecycle_source"] != "") {
 				t.Fatal("foreign lifecycle annotations remained in the effective offer")
 			}
-			if effective.Metadata["pricing_status"] != "configured" || effective.Metadata["custom"] != "keep" || effective.Metadata["call_support"] != "unsupported" || model.Metadata["lifecycle_status"] != "retired" {
-				t.Fatal("scope correction changed costs, call support, custom metadata, or stored inventory")
+			wantSupport := "unsupported"
+			if test.name == "same offer" {
+				wantSupport = ""
+			}
+			if effective.Metadata["pricing_status"] != "configured" || effective.Metadata["custom"] != "keep" || effective.Metadata["call_support"] != wantSupport || model.Metadata["lifecycle_status"] != "retired" {
+				t.Fatal("scope correction changed costs, current call support, custom metadata, or stored inventory")
 			}
 		})
 	}
