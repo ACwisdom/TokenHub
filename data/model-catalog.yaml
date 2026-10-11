@@ -41,6 +41,13 @@ models:
     - text
     - include
     - truncation
+    - service_tier
+    - safety_identifier
+    - prompt_cache_options
+    - prompt_cache_retention
+    - max_tool_calls
+    - stream_options
+    - store
     metadata:
       source: tokenhub-standard-catalog
       upstream_source: https://developers.openai.com/api/docs/models/gpt-6.1-sol
@@ -104,6 +111,13 @@ models:
     - top_logprobs
     - include
     - truncation
+    - service_tier
+    - safety_identifier
+    - prompt_cache_options
+    - prompt_cache_retention
+    - max_tool_calls
+    - stream_options
+    - store
     metadata:
       source: tokenhub-standard-catalog
       upstream_source: https://developers.openai.com/api/docs/models/gpt-6-sol
@@ -166,6 +180,13 @@ models:
     - top_logprobs
     - include
     - truncation
+    - service_tier
+    - safety_identifier
+    - prompt_cache_options
+    - prompt_cache_retention
+    - max_tool_calls
+    - stream_options
+    - store
     metadata:
       source: tokenhub-standard-catalog
       upstream_source: https://developers.openai.com/api/docs/models/gpt-6-luna
