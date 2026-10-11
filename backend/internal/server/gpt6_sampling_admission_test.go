@@ -117,6 +117,8 @@ func gpt6CapabilityRequests() []gpt6CapabilityRequest {
 	schema := map[string]any{"type": "object", "properties": map[string]any{"answer": map[string]any{"type": "string"}}, "required": []string{"answer"}, "additionalProperties": false}
 	function := map[string]any{"name": "get_answer", "parameters": schema, "strict": true}
 	return []gpt6CapabilityRequest{
+		{name: "responses_encrypted_include", responses: true, parameters: map[string]any{"store": false, "include": []string{"reasoning.encrypted_content"}}},
+		{name: "responses_truncation_disabled", responses: true, parameters: map[string]any{"truncation": "disabled"}},
 		{name: "chat_top_p", nonReasoning: true, parameters: map[string]any{"reasoning_effort": "none", "top_p": .9}},
 		{name: "chat_probabilities", nonReasoning: true, parameters: map[string]any{"reasoning_effort": "none", "logprobs": true, "top_logprobs": 2}},
 		{name: "chat_tool_controls", nonReasoning: true, parameters: map[string]any{"reasoning_effort": "none", "tools": []any{map[string]any{"type": "function", "function": function}}, "tool_choice": "required", "parallel_tool_calls": false}},
