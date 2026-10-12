@@ -326,7 +326,23 @@
       "category": "openai",
       "supported_parameters": [
         "max_tokens",
-        "max_output_tokens"
+        "max_output_tokens",
+        "max_completion_tokens",
+        "top_p",
+        "tool_choice",
+        "parallel_tool_calls",
+        "text",
+        "logprobs",
+        "top_logprobs",
+        "include",
+        "truncation",
+        "service_tier",
+        "safety_identifier",
+        "prompt_cache_options",
+        "prompt_cache_retention",
+        "max_tool_calls",
+        "stream_options",
+        "store"
       ]
     },
     {
@@ -380,9 +396,9 @@
         "tiers": [
           {
             "input": 4,
-            "output": 15,
+            "output": 15.0,
             "cache_read": 0.4,
-            "cache_write": 5,
+            "cache_write": 5.0,
             "tier": {
               "type": "context",
               "size": 272000
@@ -427,7 +443,23 @@
       "category": "openai",
       "supported_parameters": [
         "max_tokens",
-        "max_output_tokens"
+        "max_output_tokens",
+        "max_completion_tokens",
+        "top_p",
+        "tool_choice",
+        "parallel_tool_calls",
+        "text",
+        "logprobs",
+        "top_logprobs",
+        "include",
+        "truncation",
+        "service_tier",
+        "safety_identifier",
+        "prompt_cache_options",
+        "prompt_cache_retention",
+        "max_tool_calls",
+        "stream_options",
+        "store"
       ]
     },
     {
@@ -480,9 +512,9 @@
         "tiers": [
           {
             "input": 4,
-            "output": 15,
+            "output": 15.0,
             "cache_read": 0.2,
-            "cache_write": 5,
+            "cache_write": 5.0,
             "tier": {
               "type": "context",
               "size": 272000
@@ -526,7 +558,20 @@
       "category": "openai",
       "supported_parameters": [
         "max_tokens",
-        "max_output_tokens"
+        "max_output_tokens",
+        "max_completion_tokens",
+        "tool_choice",
+        "parallel_tool_calls",
+        "text",
+        "include",
+        "truncation",
+        "service_tier",
+        "safety_identifier",
+        "prompt_cache_options",
+        "prompt_cache_retention",
+        "max_tool_calls",
+        "stream_options",
+        "store"
       ]
     },
     {
