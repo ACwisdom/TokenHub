@@ -58,7 +58,7 @@ func (s *Server) handleAdminProviderMonitoring(w http.ResponseWriter, r *http.Re
 	if _, ok := s.requireAdmin(w, r, "provider", r.Method); !ok {
 		return
 	}
-	writeJSON(w, http.StatusOK, map[string]any{"data": s.providerMonitoringSnapshots(r.Context(), "")})
+	writeJSON(w, http.StatusOK, map[string]any{"data": s.providerMonitoringSnapshots("")})
 }
 
 func (s *Server) handleAdminProviderCatalogGet(w http.ResponseWriter, r *http.Request) {
@@ -367,7 +367,7 @@ func (s *Server) importSelectedProviderCatalogModels(providerID string, catalog 
 		if !selected[model.ID] {
 			continue
 		}
-		s.store.AddProviderModel(providerModelFromCatalog(providerID, model))
+		s.store.AddProviderModel(providerModelFromCatalog(providerID, catalogModelWithProvenance(model, catalog.ID)))
 		imported++
 	}
 	return imported

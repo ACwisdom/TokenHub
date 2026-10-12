@@ -29,6 +29,26 @@ This guide is for platform administrators, security operators, and infrastructur
 
 Anthropic Providers use `x-api-key` authentication by default. If an Anthropic-compatible upstream requires `Authorization: Bearer`, open the Provider's **Advanced** tab, keep **Provider Type** set to **Claude / Anthropic**, and select **Authorization Bearer** under **Anthropic Authentication**. TokenHub derives either header from the encrypted Provider API Key and sends only the selected authentication header; do not duplicate the credential in custom headers.
 
+## Managing Providers, Models, and Routes
+
+Use **Add provider** to choose a provider card directly. Search the installed catalog or choose a custom connection; an already connected provider can have another instance for a different account, region, or environment. API connections show credentials and model selection together. Retesting an unchanged provider connection preserves the selected models before import. If you switch providers while a test is running, its later result leaves the new provider's draft unchanged. After models load manually or following a successful connection test, pending automatic discovery for the same connection will not reload them or clear your selection. Account connections open authorization with the default channel summarized; advanced settings retain manual credentials and connection overrides. Saving a provider imports upstream inventory only: it does not publish client-facing models.
+
+At the top of the provider picker, use **All**, **Subscriptions and accounts**, **Provider**, **Aggregators**, or **Local deployments** to filter the installed catalog. Categories keep the current search text and show matching counts; filtering does not test connections. A custom connection remains available even when no providers match.
+
+For a custom connection, choose **Provider Type** alongside the name and Base URL so the protocol is explicit before testing. Returning to the picker and choosing the same custom connection preserves the protocol, authentication settings, and model selection in the current draft.
+
+The default provider list separates configured status from observed health. The page header counts enabled providers; it does not infer health from their configuration. A provider without observations is marked as awaiting observation. Open **Availability monitoring** to view the latest persisted probes, performance, and account quota snapshot; opening the page does not call provider upstreams. A backend task refreshes health and supported quotas every five minutes, while explicit tests and account refresh actions remain immediate. Search and category filters remain selected. Each row shows all permitted actions when space allows and moves only overflow actions into **More**; the layout adapts when the available width or interface language changes.
+
+On **Model Directory**, **New Model** is the primary action. Choose a catalog template, then confirm the client-facing model ID, imported upstream models, and prices. Template metadata is summarized under advanced settings; custom models and validation errors expose required fields. Publication and route availability remain separate indicators. Each row shows editing, routing, billing statements, publish/unpublish, and deletion directly when space allows; only actions that do not fit move into the **…** menu. The layout adapts to the available width and interface language. Closing a billing statement returns keyboard focus to its visible action or the model’s **…** button. Provider costs and unified client-facing prices remain independent, including the distinction between unknown and explicitly free prices. Click a model name to open its complete capabilities, supported protocols and parameters; administrators can also review every upstream mapping and its project scope. Read-only users can inspect model details without seeing upstream information.
+
+Expand **Advanced model settings** to adjust optional cache-write prices, including the five-minute and one-hour variants, or time-based pricing periods. Template values, including explicit zero prices, remain part of the saved model while these fields are collapsed.
+
+**Routing Policies** lists one summary per external model and defaults to configured models. Open **Configure** to edit one model's policy in a dialog. All seven strategies remain available, together with per-route resource bindings, project scope, and plugin fields. Mixed strategies are identified explicitly. Failed saves preserve the draft; leaving an edited policy asks before discarding it. Deleting the last route keeps that model's dialog open with an empty state, so you can add a replacement route or close it explicitly. Quality and cost strategies use administrator-maintained scores, not automatic model benchmarks or current market prices.
+
+If an existing route uses a strategy the editor does not recognize, its stored identifier is shown and saving remains disabled until you explicitly choose a supported strategy. Opening the editor alone does not replace the saved strategy.
+
+Screenshots with synthetic data: [provider picker](assets/screenshots/admin-management/provider-picker.png), [provider list](assets/screenshots/admin-management/providers.png), [API connection](assets/screenshots/admin-management/provider-connection.png), [model directory](assets/screenshots/admin-management/models.png), [model creation](assets/screenshots/admin-management/model-create.png), [route summary](assets/screenshots/admin-management/routes.png), [route editor](assets/screenshots/admin-management/route-editor.png), and [mobile routes](assets/screenshots/admin-management/mobile-routes.png).
+
 ## Plugin Management
 
 Open **Plugin Management** to browse the unified list of built-in and installed plugins by Provider Integration, Request Pipeline, UI Template, or Automation. Each detail page explains the plugin's purpose and exposes package files; settings appear only for implemented declarative settings surfaces. Marketplace and local package installs are validated by checksum, written to `TOKENHUB_PLUGIN_DIR`, and evaluated by a runtime reload. Declarative presentation packages can become active. An enabled external package with a backend command is instead shown as **Startup Failed**, remains installed and inspectable, and does not register its Provider, hook, job, or action because external execution is unavailable in this release. Built-ins can be enabled or disabled but not uninstalled; external packages can also be updated or uninstalled.
@@ -71,11 +91,17 @@ Each new usage record snapshots the attributed user, so later ownership changes 
 
 The per-Key **Usage** page uses the saved Key ID as an exact boundary for trends, model and error breakdowns, and request details. Rotation links are informational and do not combine predecessor and successor usage. Its current day and month Key quota cards use the configured quota timezone and resolve the same global, project, team, and Key limits used for the gateway's per-Key admission checks. Aggregate user quotas are enforced separately and are not included in this per-Key view. Platform administrators additionally receive Provider and Resource performance breakdowns; other roles retain the existing scoped request-detail visibility, and Provider cost remains restricted to platform administrators.
 
-## Daily Usage Dashboard
+The project attribution tables display visible project names when they can be resolved, otherwise retaining the project ID (or the built-in label for the default project). The resource-account dimension refers to the upstream Provider Resource used for a request, not the API Key's owner; historical usage records without a Provider Resource ID are grouped as `unknown`, and the upstream resource is not inferred from Key ownership.
 
-Open **Usage** to see the current day's usage above the longer-range executive report. The daily section shows today's tokens, requests, estimated cost, cache reads, and tables for token type, model, project, and API Key. Platform administrators also see Provider and Provider Resource tables; other roles receive only the remaining scoped dimensions. Team leaders also see member usage for their team, and governance roles see cost-center attribution.
+## Global Usage Dashboard
 
-The day boundary comes from **System Settings > Gateway Base Settings > Dashboard Timezone**. Use an IANA timezone such as `UTC`, `Asia/Shanghai`, or `America/New_York`. TokenHub stores this setting centrally, so all administrators see the same daily window and the dashboard resets at that timezone's local midnight. The usage view refreshes the daily section every 30 seconds while it is open.
+Open **Usage** and choose **Today**, **7 days**, **30 days**, or **All** at the top. Today is selected initially. The selected period applies together to estimated cost, tokens, cache reads, reasoning tokens, requests, the input/output trend, and the attribution tables. Cache reads are already part of input tokens, and reasoning tokens are already part of output tokens; they are not added again to the total. Estimated cost comes from recorded TokenHub usage and is not a provider account balance or a reconciled upstream bill. Requests include failures; the attribution tables count usage records, so those counts can differ. Playground requests are excluded.
+
+Calendar boundaries come from **System Settings > Gateway Base Settings > Dashboard Timezone**. Use an IANA timezone such as `UTC`, `Asia/Shanghai`, or `America/New_York`. **Today** starts at local midnight; **7 days** and **30 days** include today and the preceding 6 or 29 calendar days. **All** starts at the earliest visible usage record or request log, including failed requests before the first usage record. If neither exists, the report has no start timestamp. Every period ends at the current time. The trend uses hourly buckets for today, daily buckets for the other ranges, and monthly buckets when all-time history exceeds 90 days. The displayed window and timezone identify the scope of the report.
+
+The selected period refreshes every 30 seconds while the page is open, and **Refresh** requests an immediate update. Switching periods loads a new report; loading or failure never presents the previous period's totals as the new result. Use **Retry** after a failed request. An empty period is shown explicitly.
+
+Attribution remains permission-scoped. Platform administrators see Provider and Provider Resource tables; other roles receive only the remaining permitted dimensions. Team leaders also see member usage for their team, and governance roles see cost-center attribution. Time filters do not broaden these permissions.
 
 ## Quota Reset Timezone
 
@@ -193,11 +219,13 @@ When Provider Channels, Model Directory, or Routing Policies has no configured d
 
 Publication and runtime health are different states. Membership in `GET /v1/models` requires an active external `Model`, at least one active `ModelRoute`, and API-key access when a model allowlist is configured. It does not change when a Provider or Provider Resource is temporarily unhealthy. Health affects whether a request can be served and is shown separately in the directory and routing diagnostics. Disabling the external model removes it from `GET /v1/models` while retaining its mappings for later re-publication.
 
-### GPT-6 Astra
+### GPT-6 models
 
 The standard model directory and built-in OpenAI Provider inventory include `gpt-6-astra`. Select it when creating a model and configure an authorized upstream route; catalog inclusion does not grant upstream access. Codex subscription inventory remains account-discovered. Supported reasoning efforts are `low`, `medium`, `high`, `xhigh`, and `max`; Codex probes and Anthropic-to-Codex conversion preserve `max`.
 
 The template uses OpenAI Standard prices per million tokens: $10 input, $1 cached input, $12.50 cache writes, and $50 output. Above 272,000 input tokens, OpenAI doubles input/cache rates and multiplies output rates by 1.5 for the full request. Provider tier metadata records this distinction; the standard template's fixed prices do not automatically apply context tiers or Batch/Flex/Fast discounts and surcharges. Configure applicable pricing separately. See [OpenAI model specifications](https://developers.openai.com/api/docs/models/gpt-6-astra).
+
+The same catalogs also include `gpt-6.1-sol`, `gpt-6-sol`, and `gpt-6-luna`, each with a 1,050,000-token context window and 128,000-token maximum output. GPT-6.1 Sol supports `low`, `medium`, `high`, `xhigh`, and `max` reasoning efforts; tool calls require Responses, and Chat Completions supports requests without tools. GPT-6 Sol and GPT-6 Luna additionally support `none`; their Chat Completions tool calls require `reasoning_effort=none`, while tools with reasoning require Responses. Sampling parameters are unsupported while reasoning is enabled. These entries add catalog metadata only: configure an authorized Provider route and validate upstream access before use. See the official specifications for [GPT-6.1 Sol](https://developers.openai.com/api/docs/models/gpt-6.1-sol), [GPT-6 Sol](https://developers.openai.com/api/docs/models/gpt-6-sol), and [GPT-6 Luna](https://developers.openai.com/api/docs/models/gpt-6-luna).
 
 
 ## Custom Upstream Request Headers
@@ -212,9 +240,11 @@ TokenHub rejects authentication headers, API-key and cookie credentials, forward
 
 ## Model Routing Policies
 
+All admin views use the same strategy names: Jev Smart Routing, Fixed Ratio, Adaptive, Quality First, Cost First, Primary / Backup, and Combined score.
+
 The admin console configures one routing strategy for the whole external model. Open the model card and select a strategy tab; the active tab explains its best use case, actual selection behaviour, parameter meaning, and a concrete example. Adjust the Provider parameters shown for that strategy, then choose **Apply Strategy**. The policy and every Provider parameter are saved atomically, so a model never runs with a partially updated configuration.
 
-For fixed-ratio routing, enter the relative weight beside each Provider. Two Providers with weights 75 and 25 display target shares of 75% and 25%. Adaptive routing uses the same values as base weights and dynamically adjusts effective shares. Quality, cost, and balanced modes expose only their relevant scores. All of these strategies place eligible Providers in one traffic-allocation pool. Sequential failover is the only mode that uses Provider order; drag the rows to set first, second, and later choices.
+For fixed-ratio routing, enter the relative weight beside each Provider. Two Providers with weights 75 and 25 display target shares of 75% and 25%. Adaptive routing uses the same values as base weights and dynamically adjusts effective shares. Quality First, Cost First, and Combined score expose only their relevant scores. All of these strategies place eligible Providers in one traffic-allocation pool. Primary / Backup is the only mode that uses Provider order; drag the rows to set first, second, and later choices.
 
 | Strategy | Behaviour |
 | --- | --- |
@@ -236,6 +266,8 @@ Project route scope also controls model discovery: `GET /v1/models` includes an 
 Use **Scoped Policies** to bind an independent routing policy to the global gateway, a project, or an API Key. TokenHub resolves exactly one effective policy in this order: API Key, then project, then global. Finding a higher-priority binding ends resolution even when that policy is disabled, conflicting, or leaves no eligible candidate; the router fails closed and never falls back to a lower scope. Only one policy may be bound to a given target, while unbound definitions can be prepared without affecting traffic.
 
 Model access is evaluated before routing. Projects and API Keys each support `inherit` and `restricted` access modes. A restricted list is intersected with every upper-level list, so an API Key cannot expand project access; a restricted empty list denies every model. For compatibility, records created before access modes existed that have a blank mode and an empty list continue to inherit. `GET /v1/models` applies the same effective access scope and requires a route allowed by the effective routing policy.
+
+To change an existing key's model access, open **Key Management**, choose **Edit** on the key's row, and set **Model Access Mode**. In `restricted` mode, enter comma-separated model names in the allowlist; leaving it empty denies all models. Select `inherit` to use the project's effective model scope again. Saving updates the existing key without rotating its secret, and the list's **Model** column shows the saved access scope. Editing requires permission to manage that key.
 
 A scoped policy can constrain model names, Providers, Provider Resources, required route tags, resource regions, and resource environments, and can override the routing strategy. Configure tags on model routes and region/environment metadata on Provider Resources. Existing route-level project scopes are intersected with these constraints. Traffic allocation, session/cache affinity, half-open recovery, and failover run only after filtering and can never add an excluded route back to the candidate pool. This makes an internal-only policy fail safely instead of silently crossing to an external Provider.
 
@@ -457,4 +489,4 @@ behavior is preserved; only `starttls` and `ssl` write the field.
 
 ## Screenshot
 
-![Routing policies](assets/screenshots/routes-en.png)
+![Routing policies](assets/screenshots/admin-management/routes.png)
